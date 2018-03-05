@@ -1,7 +1,8 @@
 {
-  "DB_LOCATION": "localhost",
-  "DB_PORT": 3306,
-  "DB_NAME": "solarrad",
-  "DB_USER": "solar",
-  "DB_PASSWORD": "solar"
+  "host": "127.0.0.1",
+  "port": 3306,
+  "database": "solarrad",
+  "user": "solar",
+  "password": "solar",
+  "raise_on_warnings": true
 }
