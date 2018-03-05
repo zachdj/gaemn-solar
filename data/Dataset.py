@@ -29,7 +29,6 @@ def generate_from_csv(filepath, name=None):
 def generate_from_query(target_hour=1, site_id=115, gaemn=True, window=False, nam_cell=False, nam_grid=False,
                         start_date='2011-06-22', end_date='2012-04-30 23:45:00', name=None):
     query_string = build_query(target_hour, site_id, gaemn, window, nam_cell, nam_grid, start_date, end_date)
-    print(query_string)
     db_config = config.get_config()
 
     X = []  # data with no labels
@@ -91,7 +90,6 @@ class Dataset(object):
         # assemble data into csv form
         labels = np.reshape(self.labels, (len(self.labels), 1))
         data = np.append(self.data, labels, axis=1)
-        print(data)
 
         filepath = os.path.join(directory, filename)
         with open(filepath, 'w') as outfile:
