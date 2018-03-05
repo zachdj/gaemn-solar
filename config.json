@@ -1,0 +1,7 @@
+{
+  "DB_LOCATION": "localhost",
+  "DB_PORT": 3306,
+  "DB_NAME": "solarrad",
+  "DB_USER": "solar",
+  "DB_PASSWORD": "solar"
+}
