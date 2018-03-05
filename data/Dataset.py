@@ -2,6 +2,10 @@ import csv
 import os
 import numpy as np
 import pandas as pd
+import mysql.connector
+
+from data.query import build as build_query
+import data.config as config
 
 
 def generate_from_csv(filepath, name=None):
@@ -22,8 +26,33 @@ def generate_from_csv(filepath, name=None):
     return Dataset(name, X, y, attr_labels=column_names)
 
 
-# def generate_from_query(target_hour=1, site_id=115, ):
+def generate_from_query(target_hour=1, site_id=115, gaemn=True, window=False, nam_cell=False, nam_grid=False,
+                        start_date='2011-06-22', end_date='2012-04-30 23:45:00', name=None):
+    query_string = build_query(target_hour, site_id, gaemn, window, nam_cell, nam_grid, start_date, end_date)
+    print(query_string)
+    db_config = config.get_config()
 
+    X = []  # data with no labels
+    y = []
+
+    cnx = mysql.connector.connect(**db_config)
+    cursor = cnx.cursor()
+    cursor.execute(query_string)
+    for record in cursor:
+        X.append(
+            np.array(record[:-1]).astype(float)
+        )
+        y.append(float(record[-1]))
+    cnx.close()
+
+    if name is None:
+        name = f'data_{target_hour}hour'
+        if gaemn: name += '_gaemn'
+        if window: name += '_window'
+        if nam_cell: name += '_cell'
+        if window: name += '_multi'
+
+    return Dataset(name, X, y)
 
 
 class Dataset(object):
@@ -39,8 +68,8 @@ class Dataset(object):
         :param attr_labels: labels for the columns of X and y
         """
         self.name = str(name)
-        self.data = X
-        self.labels = y
+        self.data = np.array(X)
+        self.labels = np.array(y)
 
     def write_to_file(self, directory, filename=None):
         """
