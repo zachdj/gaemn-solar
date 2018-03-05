@@ -1,41 +1,36 @@
-import numpy as np
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import mean_absolute_error
-import pandas as pd
-import csv
-
 """
 Random Forest for solar prediction
 """
 
-# path to the csv file to use
-# TODO: replace this with a data.Dataset object
-# DATASET = "/media/zach/Elements/SolarData/24_hr_results/all_attributes/griffin.csv"
-DATASET = "/media/zach/PNY_32GB/SolarData/24_hr_results/all_attributes_and_window/data-griffin.csv"
-# DATASET = "/media/zach/Elements/SolarData/24_hr_results/multi_cell/griffin.csv"
-# DATASET = "/media/zach/Elements/SolarData/1_hr_results/multi_cell/data.csv"
-HAS_HEADER = True  # does the csv have a header with column names?
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+from data import Dataset
+
+# generate a dataset
+dataset = Dataset.generate_from_query(target_hour=24, site_id=115, gaemn=True, window=True, nam_cell=True, nam_grid=False)
 
 # params for rf regressor
 params = {
-    "n_estimators": 100,
+    "n_estimators": 20,
     "criterion": "mse",
     "max_features": None,
-    "max_depth": 15,
+    "max_depth": 20,
     "min_samples_split": 2,
     "bootstrap": True,
-    "random_state": 1
+    "random_state": 123
 }
 
-# read dataset
-df = pd.read_csv(DATASET, sep=',')
-X = df[df.columns.tolist()[:-1]].values
-y = df[df.columns.tolist()[-1]].values
+X_train, X_test, y_train, y_test = train_test_split(dataset.data, dataset.labels, test_size=0.20, random_state=123)
 
 regressor = RandomForestRegressor(**params)
-# regressor.fit(X, y)
-scores = cross_val_score(regressor, X, y, cv=10, scoring='neg_mean_absolute_error', n_jobs=-1)
-print("Random Forest")
-print(DATASET)
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+regressor.fit(X_train, y_train)
+
+predictions = regressor.predict(X_test)
+correlation = r2_score(y_test, predictions)
+mse = mean_squared_error(y_test, predictions)
+mae = mean_absolute_error(y_test, predictions)
+
+print("RF on %s" % dataset.name)
+print("Corr: %0.4f \n MSE: %0.4f \n MAE: %0.4f" % (correlation, mse, mae))
