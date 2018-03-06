@@ -102,3 +102,7 @@ ENV/
 
 # IDE files
 .idea
+
+# experiment results
+results
+!results/results.txt
