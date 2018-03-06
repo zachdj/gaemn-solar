@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import mysql.connector
 
-from data.query import build as build_query
-import data.config as config
+from solarrad.query import build as build_query
+import solarrad.config as config
 
 
 def generate_from_csv(filepath, name=None):
@@ -31,7 +31,7 @@ def generate_from_query(target_hour=1, site_id=115, gaemn=True, window=False, na
     query_string = build_query(target_hour, site_id, gaemn, window, nam_cell, nam_grid, start_date, end_date)
     db_config = config.get_config()
 
-    X = []  # data with no labels
+    X = []  # solarrad with no labels
     y = []
 
     cnx = mysql.connector.connect(**db_config)
@@ -62,7 +62,7 @@ class Dataset(object):
         y is an (optional) array of labels or values
 
         :param name: a logical name for this dataset
-        :param X: an array of data points without labels
+        :param X: an array of solarrad points without labels
         :param y: the labels corresponding to X
         :param attr_labels: labels for the columns of X and y
         """
@@ -87,7 +87,7 @@ class Dataset(object):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        # assemble data into csv form
+        # assemble solarrad into csv form
         labels = np.reshape(self.labels, (len(self.labels), 1))
         data = np.append(self.data, labels, axis=1)
 

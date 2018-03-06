@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from data import Dataset
+from solarrad import Dataset
 
 # generate a dataset
 dataset = Dataset.generate_from_query(target_hour=24, site_id=115, gaemn=True, window=True, nam_cell=True, nam_grid=False)
