@@ -102,3 +102,6 @@ ENV/
 
 # IDE files
 .idea
+
+# ignore future changes to the config file
+data/config.py
