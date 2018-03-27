@@ -37,6 +37,7 @@ def generate_from_query(target_hour=1, site_id=115, gaemn=True, window=False, na
     cnx = mysql.connector.connect(**db_config)
     cursor = cnx.cursor()
     cursor.execute(query_string)
+    attribute_names = [i[0] for i in cursor.description]
     for record in cursor:
         X.append(
             np.array(record[:-1]).astype(float)
@@ -51,7 +52,7 @@ def generate_from_query(target_hour=1, site_id=115, gaemn=True, window=False, na
         if nam_cell: name += '_cell'
         if window: name += '_multi'
 
-    return Dataset(name, X, y)
+    return Dataset(name, X, y, attr_labels=attribute_names)
 
 
 class Dataset(object):
@@ -69,6 +70,7 @@ class Dataset(object):
         self.name = str(name)
         self.data = np.array(X)
         self.labels = np.array(y)
+        self.attr_labels = attr_labels
 
     def write_to_file(self, directory, filename=None):
         """
@@ -94,6 +96,11 @@ class Dataset(object):
         filepath = os.path.join(directory, filename)
         with open(filepath, 'w') as outfile:
             writer = csv.writer(outfile, delimiter=",")
+            # write a header row if the attribute names are known
+            if self.attr_labels is not None:
+                writer.writerow(self.attr_labels)
+
+            # write a line for each example
             for example in data:
                 writer.writerow(example)
 
