@@ -110,3 +110,6 @@ data/config.py
 # experiment results
 results
 !results/results.txt
+
+# saved data
+data/
