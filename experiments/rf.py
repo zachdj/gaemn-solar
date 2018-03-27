@@ -21,7 +21,7 @@ sites = {
 
 # params for rf regressor
 rf_params = {
-    "n_estimators": 20,
+    "n_estimators": 100,
     "criterion": "mse",
     "max_features": None,
     "max_depth": 20,
