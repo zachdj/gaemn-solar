@@ -105,3 +105,8 @@ ENV/
 
 # ignore future changes to the config file
 data/config.py
+
+
+# experiment results
+results
+!results/results.txt
