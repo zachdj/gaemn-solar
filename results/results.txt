@@ -1,7 +1,0 @@
-all_attr, 24hr, RF:
--63.77 (+/- 26.68)
-
-single_cell, 24hr, RF:
-
-multicell, 24hr, RF:
-MAE: 49.63 (+/- 32.52)
