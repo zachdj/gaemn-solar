@@ -45,32 +45,34 @@ def do_experiment(hour, site, gaemn=False, window=False, nam_cell=False, nam_gri
     return mae
 
 
-# iterate over all sites
-for site_name, site_id in sites.items():
-    print("Working on site %s" % site_name)
-    # construct TextTable for writing out results
-    table = Texttable()
-    table.set_cols_align(["c", "c", "c", "c", "c", "c", "c"])
-    table.header(["Hour", "gaemn only", "gaemn+window", "gaemn + window + single-cell", "gaemn + window + multicell",
-                  "NAM Only", "% decrease"])
+if __name__ == '__main__':
 
-    # do an experiment for each hour and each dataset
-    for hour in list(range(1, 37)):
-        print("Hour %d" % hour)
-        all_attr_mae = do_experiment(hour, site_id, gaemn=True)
-        window_mae = do_experiment(hour, site_id, gaemn=True, window=True)
-        singlecell_mae = do_experiment(hour, site_id, gaemn=True, window=True, nam_cell=True)
-        multicell_mae = do_experiment(hour, site_id, gaemn=True, window=True, nam_cell=True, nam_grid=True)
-        nam_only = do_experiment(hour, site_id, gaemn=False, window=False, nam_cell=True, nam_grid=False)
-        pct_improvement = (window_mae - multicell_mae) * 100 / window_mae
-        table.add_row([hour, all_attr_mae, window_mae, singlecell_mae, multicell_mae, nam_only, pct_improvement])
+    # iterate over all sites
+    for site_name, site_id in sites.items():
+        print("Working on site %s" % site_name)
+        # construct TextTable for writing out results
+        table = Texttable()
+        table.set_cols_align(["c", "c", "c", "c", "c", "c", "c"])
+        table.header(["Hour", "gaemn only", "gaemn+window", "gaemn + window + single-cell", "gaemn + window + multicell",
+                      "NAM Only", "% decrease"])
 
-    # output the table to a file:
-    if not os.path.exists(OUTPATH):
-        os.makedirs(OUTPATH)
-    outfilepath = os.path.join(OUTPATH, site_name+".txt")
-    with open(outfilepath, 'w') as outfile:
-        print(site_name.capitalize(), file=outfile)
-        print(table.draw(), file=outfile)
+        # do an experiment for each hour and each dataset
+        for hour in list(range(1, 37)):
+            print("Hour %d" % hour)
+            all_attr_mae = do_experiment(hour, site_id, gaemn=True)
+            window_mae = do_experiment(hour, site_id, gaemn=True, window=True)
+            singlecell_mae = do_experiment(hour, site_id, gaemn=True, window=True, nam_cell=True)
+            multicell_mae = do_experiment(hour, site_id, gaemn=True, window=True, nam_cell=True, nam_grid=True)
+            nam_only = do_experiment(hour, site_id, gaemn=False, window=False, nam_cell=True, nam_grid=False)
+            pct_improvement = (window_mae - multicell_mae) * 100 / window_mae
+            table.add_row([hour, all_attr_mae, window_mae, singlecell_mae, multicell_mae, nam_only, pct_improvement])
 
-print("Done!")
+        # output the table to a file:
+        if not os.path.exists(OUTPATH):
+            os.makedirs(OUTPATH)
+        outfilepath = os.path.join(OUTPATH, site_name+".txt")
+        with open(outfilepath, 'w') as outfile:
+            print(site_name.capitalize(), file=outfile)
+            print(table.draw(), file=outfile)
+
+    print("Done!")
