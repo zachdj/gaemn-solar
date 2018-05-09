@@ -111,6 +111,40 @@ and rename it to ```config.json```.  The following variables should be set
 
 * [**Zach Jones**](https://github.com/zachdj)
 
+## Work Log
+
+**1/22/18**: Established goal of replicating Sam's work and extending it temporally.
+
+**2/6/18**: Noticed weird behavior when running custom SQL queries for different hours.  We were generating several
+identical rows but with different target values.
+
+**2/13/18**: Discovered that the previous problem was caused by failing to enforce matching of the `site_id` when
+joining rows.  Easy fix.
+
+**2/20/18**: Was able to replicate Sam's results for 1, 6, 12, 18, and 24 hour predictions.  However, it takes
+a really long time to generate these datasets by hand and run experiments using WEKA.  Updated goal: port
+everything to Python using the usualy Python data science tools.
+
+**2/27/18**: Noticed that `scikit`'s RF regressor was giving *much* worse results than WEKA.  One possible explanation
+is the lack of post-pruning in the `scikit-learn` implementation.  New goal: try several different ML packages and see
+if we can establish whether WEKA or `scikit` results are typical.
+
+**3/3/18**: Ran a few experiments with the H2O framework, and results mostly agreed with WEKA.  Ported dataset generation
+to Python using the mysql-python-connector.  Tried to ensure `sklearn` RF hyperparams were the same as WEKA.
+Resolved problem with long runtimes by switched from the `mae` splitting criterion to `mse`.  
+
+**3/4/18**: Ran into a new problem.  `mySQL` queries with complicated joins were timing out for the 3x3 grid 
+multi-cell queries.  Problem was traced to an inner join that uses the `DATE_SUB` function.  Replaced the `DATE_SUB` 
+call with a query that relies on the ordering of the rows.  This makes the query less readable and less robust
+but was the only solution I could come up with quickly.
+
+with new data loader, result discrepancy is cleared up.  Unsure why.  Perhaps my CSV files had been generated
+incorrectly.
+
+Switched to train-test split for evaluating results instead of 10-fold CV.  This makes experiments run way faster with
+no discernable difference in results.
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
