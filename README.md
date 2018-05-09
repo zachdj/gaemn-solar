@@ -107,11 +107,6 @@ and rename it to ```config.json```.  The following variables should be set
 * [Python 3.6](https://www.python.org/)
 * [Conda](https://conda.io/docs/) - Package Manager
 
-## Versioning
-
-This project uses the [GitFlow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) workflow
-to organize branches and "releases".
-
 ## Authors
 
 * [**Zach Jones**](https://github.com/zachdj)
