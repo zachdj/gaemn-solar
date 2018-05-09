@@ -10,18 +10,21 @@ import os
 
 from solarrad import Dataset
 
+# output directory
+OUTPATH = './results'
+
 # site ids for the five sites in Sam's paper
 sites = {
     "griffin": 115,
-    "jonesboro": 380,
-    "attapulgus": 190,
-    "blairsville": 150,
-    "brunswick": 420
+    # "jonesboro": 380,
+    # "attapulgus": 190,
+    # "blairsville": 150,
+    # "brunswick": 420
 }
 
 # params for rf regressor
 rf_params = {
-    "n_estimators": 100,
+    "n_estimators": 20,
     "criterion": "mse",
     "max_features": None,
     "max_depth": 20,
@@ -47,8 +50,9 @@ for site_name, site_id in sites.items():
     print("Working on site %s" % site_name)
     # construct TextTable for writing out results
     table = Texttable()
-    table.set_cols_align(["c", "c", "c", "c", "c", "c"])
-    table.header(["Hour", "gaemn only", "gaemn+window", "gaemn + window + single-cell", "gaemn + window + multicell", "% decrease"])
+    table.set_cols_align(["c", "c", "c", "c", "c", "c", "c"])
+    table.header(["Hour", "gaemn only", "gaemn+window", "gaemn + window + single-cell", "gaemn + window + multicell",
+                  "NAM Only", "% decrease"])
 
     # do an experiment for each hour and each dataset
     for hour in list(range(1, 37)):
@@ -57,12 +61,15 @@ for site_name, site_id in sites.items():
         window_mae = do_experiment(hour, site_id, gaemn=True, window=True)
         singlecell_mae = do_experiment(hour, site_id, gaemn=True, window=True, nam_cell=True)
         multicell_mae = do_experiment(hour, site_id, gaemn=True, window=True, nam_cell=True, nam_grid=True)
+        nam_only = do_experiment(hour, site_id, gaemn=False, window=False, nam_cell=True, nam_grid=False)
         pct_improvement = (window_mae - multicell_mae) * 100 / window_mae
-        table.add_row([hour, all_attr_mae, window_mae, singlecell_mae, multicell_mae, pct_improvement])
+        table.add_row([hour, all_attr_mae, window_mae, singlecell_mae, multicell_mae, nam_only, pct_improvement])
 
     # output the table to a file:
-    outpath = os.path.join("../results", site_name+".txt")
-    with open(outpath, 'w') as outfile:
+    if not os.path.exists(OUTPATH):
+        os.makedirs(OUTPATH)
+    outfilepath = os.path.join(OUTPATH, site_name+".txt")
+    with open(outfilepath, 'w') as outfile:
         print(site_name.capitalize(), file=outfile)
         print(table.draw(), file=outfile)
 
