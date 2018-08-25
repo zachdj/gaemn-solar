@@ -89,19 +89,6 @@ Experiments are stored in the `experiments` subdirectory.  Currently, the only w
 
 ```$ python experiments/rf.py```
 
-### Configuration variables
-These scripts support user-defined configuration variables that tell the scripts the location of 
-the text data and the location of the cluster on which to run.
-
-The config.json file is ignored, so to get started, create a copy of ```config.example.json``` 
-and rename it to ```config.json```.  The following variables should be set
-
-* ```APP_NAME``` - If running on a cluster with a GUI, this name will show up while the job is running
-   (defaults to 'zachdj-p0')
-* ```CLUSTER_URI``` - The location of the cluster on which the jobs should be run (defaults to 'local')
-* ```DATA_LOCATION``` - The local/remote directory, file name, or HDFS from which the text files should be read 
- (defaults to 'testdata')
-
 ## Built With
 
 * [Python 3.6](https://www.python.org/)
