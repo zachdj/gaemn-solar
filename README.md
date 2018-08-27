@@ -73,7 +73,7 @@ The environment.yml file is used by Conda to create a virtual environment that i
 Navigate to the project directory and run the following command
 
 ```
-conda env create
+conda env create -f environment.yml
 ```
 
 This will create a virtual environment named "solarrad".  Activate the virtual environment with the following command
@@ -81,6 +81,9 @@ This will create a virtual environment named "solarrad".  Activate the virtual e
 ```
 conda activate solarrad
 ```
+
+### Setting Config Variables
+
 
 ### Running experiments
 
