@@ -108,3 +108,6 @@ data/config.py
 
 # saved data
 data/
+
+# main config file (has sensitive info)
+config.json
