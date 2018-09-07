@@ -68,7 +68,7 @@ package manager.  You'll need to install Conda to get setup.
 
 ### Installing Dependencies
 
-The environment.yml file is used by Conda to create a virtual environment that includes all the project's dependencies (including Python!)
+The [environment.yml](environment.yml) file is used by Conda to create a virtual environment that includes all the project's dependencies (including Python!)
 
 Navigate to the project directory and run the following command
 
@@ -83,6 +83,18 @@ conda activate solarrad
 ```
 
 ### Setting Config Variables
+
+Make a copy of [`config.example.json`](config.example.json) and rename it to `config.json`.
+
+Modify the connection settings in `config.json` with the correct database name, location, 
+and credentials.
+
+- `host`: the network address of the database server
+- `port`: the port on which the server is running (usually 3306)
+- `database`: the name of the database to use
+- `user`: username
+- `password`: password
+- `raise_on_warnings`: [Official Docs](https://dev.mysql.com/doc/connector-python/en/connector-python-api-mysqlconnection-raise-on-warnings.html)
 
 
 ### Running experiments

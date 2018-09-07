@@ -1,17 +1,29 @@
-"""
-These configuration variables can be modified to target a different database
-"""
+""" The config module provides a convenient API for accessing configuration settings """
 
-config = {
-    "host": "127.0.0.1",
-    "port": 3306,
-    "database": "solar",
-    "user": "solar_user",
-    "password": "solar_pass",
-    "raise_on_warnings": True
-}
+import json
+
+_config = dict()
+config_file_read = False
+
+try:
+    with open('../config.json', 'r') as config_file:
+        _config = json.load(config_file)
+        config_file_read = True
+except FileNotFoundError:
+    print('WARNING: Could not read "config.json" file.')
 
 
-def get_config():
-    global config
-    return config
+def get(key):
+    if key in _config:
+        return _config[key]
+    else:
+        raise KeyNotFoundException('The item "%s" was not found in the configuration settings.  '
+                                   'Please check the config.json file.' % key)
+
+
+def get_as_dict():
+    return _config.copy()
+
+
+class KeyNotFoundException(Exception):
+    pass

@@ -28,14 +28,18 @@ def generate_from_csv(filepath, name=None):
 
 def generate_from_query(target_hour=1, site_id=115, gaemn=True, window=False, nam_cell=False, nam_grid=False,
                         start_date='2011-06-22', end_date='2012-04-30 23:45:00', name=None):
-    query_string = build_query(target_hour, site_id, gaemn, window, nam_cell, nam_grid, start_date, end_date)
-    db_config = config.get_config()
 
-    X = []  # solarrad with no labels
-    y = []
+    X = []  # attributes
+    y = []  # target
 
+    # establish connection to mySQL database
+    db_config = config.get_as_dict()
     cnx = mysql.connector.connect(**db_config)
     cursor = cnx.cursor()
+
+    # build and execute the query
+    query_string = build_query(target_hour, site_id, gaemn, window, nam_cell, nam_grid, start_date, end_date)
+
     cursor.execute(query_string)
     attribute_names = [i[0] for i in cursor.description]
     for record in cursor:
