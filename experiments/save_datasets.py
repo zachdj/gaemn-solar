@@ -1,6 +1,4 @@
-"""
-Save some datasets so that we can play with them elsewhere
-"""
+""" Saves some datasets as csv files so they can be opened elsewhere """
 
 from solarrad import Dataset
 

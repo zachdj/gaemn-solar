@@ -1,4 +1,4 @@
-""" The config module provides a convenient API for accessing configuration settings """
+""" API for accessing user configuration settings in the `config.json` file """
 
 import json
 

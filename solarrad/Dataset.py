@@ -9,8 +9,8 @@ import solarrad.config as config
 
 
 def generate_from_csv(filepath, name=None):
-    """
-    Reads a dataset from a csv file at the given location
+    """ Reads a dataset from a csv file at the given location
+
     :param filepath: the location of the csv file on the local filesystem
     :param name: (Optional) logical name for the dataset.  Defaults to the filepath
     :return: Dataset object representing the contents of the csv file

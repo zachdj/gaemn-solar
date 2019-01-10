@@ -2,6 +2,7 @@
 Query builder for solarradiation database
 """
 
+
 def build(target_hour=1, site_id=115, gaemn=True, window=False, nam_cell=False, nam_grid=False,
                         start_date='2011-06-22', end_date='2012-04-30 23:45:00'):
 
