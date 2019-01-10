@@ -4,5 +4,6 @@
     "database": "solar",
     "user": "solar_user",
     "password": "solar_password",
-    "raise_on_warnings": true
+    "raise_on_warnings": true,
+    "use_pure": true
 }
