@@ -109,6 +109,9 @@ data/config.py
 # saved data
 data/
 
+# temporary files
+tmp
+
 # main config file (has sensitive info)
 config.json
 config.db.json
