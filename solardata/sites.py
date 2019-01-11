@@ -8,7 +8,7 @@ SITES = {
     "brunswick": 420
 }
 
-IDS = {value: key for key, value in SITES}
+IDS = {SITES[key]: key for key in SITES}
 
 
 def get_site_id_by_name(site_name):
