@@ -4,11 +4,11 @@ Random Forest for solar prediction
 
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error
 from texttable import Texttable
 import os
 
-from solarrad import Dataset
+from solardata import Dataset
 
 # output directory
 OUTPATH = './results'

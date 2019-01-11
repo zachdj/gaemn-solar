@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import mysql.connector
 
-from solarrad.query import build as build_query
-import solarrad.config as config
+from solardata.query import build as build_query
+import solardata.config as config
 
 
 def generate_from_csv(filepath, name=None):
