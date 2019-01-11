@@ -33,7 +33,7 @@ def generate_from_query(target_hour=1, site_id=115, gaemn=True, window=False, na
     y = []  # target
 
     # establish connection to mySQL database
-    db_config = config.get_as_dict()
+    db_config = config.to_dict()
     cnx = mysql.connector.connect(**db_config)
     cursor = cnx.cursor()
 

@@ -21,7 +21,7 @@ def get(key):
                                    'Please check the config.json file.' % key)
 
 
-def get_as_dict():
+def to_dict():
     return _config.copy()
 
 
