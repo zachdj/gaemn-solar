@@ -84,7 +84,7 @@ conda activate solarrad
 
 ### Setting Config Variables
 
-Make a copy of [`config.example.json`](config.example.json) and rename it to `config.json`.
+Make a copy of [`config.db.example.json`](config.db.example.json) and rename it to `config.db.json`.
 
 Modify the connection settings in `config.json` with the correct database name, location, 
 and credentials.
@@ -95,7 +95,7 @@ and credentials.
 - `user`: username
 - `password`: password
 - `raise_on_warnings`: [Official Docs](https://dev.mysql.com/doc/connector-python/en/connector-python-api-mysqlconnection-raise-on-warnings.html)
-
+- `use_pure`: [Official Docs](https://dev.mysql.com/doc/connector-python/en/connector-python-connectargs.html)
 
 ### Running experiments
 

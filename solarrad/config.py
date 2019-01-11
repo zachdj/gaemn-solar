@@ -1,4 +1,4 @@
-""" API for accessing user configuration settings in the `config.json` file """
+""" API for accessing user configuration settings in the `config.db.json` file """
 
 import json
 
@@ -6,11 +6,11 @@ _config = dict()
 config_file_read = False
 
 try:
-    with open('../config.json', 'r') as config_file:
+    with open('../config.db.json', 'r') as config_file:
         _config = json.load(config_file)
         config_file_read = True
 except FileNotFoundError:
-    print('WARNING: Could not read "config.json" file.')
+    print('WARNING: Could not read "config.db.json" file.')
 
 
 def get(key):
@@ -18,7 +18,7 @@ def get(key):
         return _config[key]
     else:
         raise KeyNotFoundException('The item "%s" was not found in the configuration settings.  '
-                                   'Please check the config.json file.' % key)
+                                   'Please check the `config.db.json` file.' % key)
 
 
 def to_dict():
