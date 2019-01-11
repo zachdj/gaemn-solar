@@ -12,10 +12,10 @@ class Query(object):
         self.start_date = start_date
         self.end_date = end_date
         self.components = {
-            gaemn: gaemn,
-            window: window,
-            nam_cell: nam_cell,
-            nam_grid: nam_grid
+            'gaemn': gaemn,
+            'window': window,
+            'nam_cell': nam_cell,
+            'nam_grid': nam_grid
         }
         self.query = ""
 
@@ -125,7 +125,7 @@ class Query(object):
                      " AND gpSoutheast.cell='Southeast' AND gp.SiteID=gpSoutheast.SiteID "
 
         # add date and size constraints
-        self.query += f' WHERE sr.dateandtime BETWEEN "{start_date}" AND "{end_date}" AND sr.SiteID={site_id} ' \
+        self.query += f' WHERE sr.dateandtime BETWEEN "{start_date}" AND "{end_date}" AND sr.SiteID={self.site_id} ' \
                  f' ORDER BY sr.dateandtime LIMIT 100000;'
 
     def __str__(self):
