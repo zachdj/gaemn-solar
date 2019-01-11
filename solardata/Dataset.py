@@ -91,7 +91,7 @@ class Dataset(object):
 
         # reshape data to be tabular
         labels = np.reshape(self.labels, (len(self.labels), 1))
-        data = np.append(self.data, labels, axis=1)
+        data = np.append(self.examples, labels, axis=1)
 
         filepath = os.path.join(directory, filename)
         with open(filepath, 'w') as outfile:
