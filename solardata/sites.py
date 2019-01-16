@@ -23,3 +23,11 @@ def get_site_by_id(id):
         return IDS[id]
     else:
         raise ValueError(f'Invalid Site ID: {id}')
+
+
+def get_names():
+    return list(SITES.keys())
+
+
+def get_ids():
+    return list(SITES.values())
