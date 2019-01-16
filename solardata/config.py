@@ -1,12 +1,15 @@
 """ API for accessing user configuration settings in the `config.db.json` file """
 
 import json
+import os
 
 _config = dict()
 config_file_read = False
 
 try:
-    with open('../config.db.json', 'r') as config_file:
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    config_filepath = os.path.join(current_dir, '..', 'config.db.json')
+    with open(config_filepath, 'r') as config_file:
         _config = json.load(config_file)
         config_file_read = True
 except FileNotFoundError:
