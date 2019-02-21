@@ -5,7 +5,7 @@ import solardata.sites as sites
 
 class Query(object):
     def __init__(self, target_hour=1, site='griffin', start_date='2011-06-22', end_date='2012-04-30 23:45:00',
-                 gaemn=True, window=False, nam_cell=False, nam_grid=False):
+                 gaemn=True, window=False, rap_cell=False, rap_grid=False, nam_cell=False, nam_grid=False):
         self.target_hour = target_hour
         self.site = site
         self.site_id = sites.get_site_id_by_name(site)
@@ -14,14 +14,15 @@ class Query(object):
         self.components = {
             'gaemn': gaemn,
             'window': window,
+            'rap_cell': rap_cell,
+            'rap_grid': rap_grid,
             'nam_cell': nam_cell,
             'nam_grid': nam_grid
         }
-        self.query = ""
 
         h = target_hour
 
-        # build the selected attributes
+        # build the query with the selected components
         self.query = "SELECT sr.Day, sr.AdjDate "
         if gaemn:
             self.query += ",sr.AirTemp,sr.Humidity,sr.Dewpoint,sr.VaporP,sr.VaporPD,sr.BarometricP," \
@@ -32,45 +33,130 @@ class Query(object):
                      "psr13.sr AS psr13,psr14.sr AS psr14,psr15.sr AS psr15,psr16.sr AS psr16,psr17.sr AS psr17," \
                      "psr18.sr AS psr18,psr19.sr AS psr19,psr20.sr AS psr20,psr21.sr AS psr21,psr22.sr AS psr22," \
                      "psr23.sr AS psr23,psr24.sr AS psr24 "
+
+        if rap_cell:
+            self.query += ",gp_rap.Temperature AS RAPTemp, gp_rap.PrecipitationRate AS RAPPrecipRate, " \
+                          "gp_rap.Visibility AS RAPVis, gp_rap.WindSpeed AS RAPWindSpeed, " \
+                          "gp_rap.WindDirection AS RAPWidDir, gp_rap.DewPointTemperature AS RAPDewPoint, " \
+                          "gp_rap.AirPressure AS RAPAirPressure, gp_rap.RelativeHumidity AS RAPRelativeHumidity "
+
+        if rap_grid:
+            self.query += ",gp_rap_West.Temperature AS RAPWestTemp,gp_rap_West.PrecipitationRate AS RAPWestPrecipRate,gp_rap_West.Visibility AS RAPWestVis," \
+                          "gp_rap_West.WindSpeed AS RAPWestWindSpeed,gp_rap_West.WindDirection AS RAPWestWidDir," \
+                          "gp_rap_West.DewPointTemperature AS RAPWestDewPoint,gp_rap_West.AirPressure AS RAPWestAirPressure," \
+                          "gp_rap_West.RelativeHumidity AS RAPWestRelativeHumidity," \
+                          "" \
+                          "gp_rap_East.Temperature AS RAPEastTemp,gp_rap_East.PrecipitationRate AS RAPEastPrecipRate," \
+                          "gp_rap_East.Visibility AS RAPEastVis, gp_rap_East.WindSpeed AS RAPEastWindSpeed," \
+                          "gp_rap_East.WindDirection AS RAPEastWidDir,gp_rap_East.DewPointTemperature AS RAPEastDewPoint," \
+                          "gp_rap_East.AirPressure AS RAPEastAirPressure,gp_rap_East.RelativeHumidity AS RAPEastRelativeHumidity," \
+                          "" \
+                          "gp_rap_North.Temperature AS RAPNorthTemp,gp_rap_North.PrecipitationRate AS RAPNorthPrecipRate," \
+                          "gp_rap_North.Visibility AS RAPNorthVis,gp_rap_North.WindSpeed AS RAPNorthWindSpeed," \
+                          "gp_rap_North.WindDirection AS RAPNorthWidDir,gp_rap_North.DewPointTemperature AS RAPNorthDewPoint," \
+                          "gp_rap_North.AirPressure AS RAPNorthAirPressure,gp_rap_North.RelativeHumidity AS RAPNorthRelativeHumidity," \
+                          "" \
+                          "gp_rap_South.Temperature AS RAPSouthTemp,gp_rap_South.PrecipitationRate AS RAPSouthPrecipRate," \
+                          "gp_rap_South.Visibility AS RAPSouthVis,gp_rap_South.WindSpeed AS RAPSouthWindSpeed," \
+                          "gp_rap_South.WindDirection AS RAPSouthWidDir,gp_rap_South.DewPointTemperature AS RAPSouthDewPoint," \
+                          "gp_rap_South.AirPressure AS RAPSouthAirPressure,gp_rap_South.RelativeHumidity AS RAPSouthRelativeHumidity," \
+                          "" \
+                          "gp_rap_Northwest.Temperature AS RAPNorthwestTemp,gp_rap_Northwest.PrecipitationRate AS RAPNorthwestPrecipRate," \
+                          "gp_rap_Northwest.Visibility AS RAPNorthwestVis,gp_rap_Northwest.WindSpeed AS RAPNorthwestWindSpeed," \
+                          "gp_rap_Northwest.WindDirection AS RAPNorthwestWidDir,gp_rap_Northwest.DewPointTemperature AS RAPNorthwestDewPoint," \
+                          "gp_rap_Northwest.AirPressure AS RAPNorthwestAirPressure," \
+                          "gp_rap_Northwest.RelativeHumidity AS RAPNorthwestRelativeHumidity," \
+                          "gp_rap_Northeast.Temperature AS RAPNortheastTemp,gp_rap_Northeast.PrecipitationRate AS RAPNortheastPrecipRate," \
+                          "gp_rap_Northeast.Visibility AS RAPNortheastVis,gp_rap_Northeast.WindSpeed AS RAPNortheastWindSpeed," \
+                          "gp_rap_Northeast.WindDirection AS RAPNortheastWidDir,gp_rap_Northeast.DewPointTemperature AS RAPNortheastDewPoint," \
+                          "gp_rap_Northeast.AirPressure AS RAPNortheastAirPressure,gp_rap_Northeast.RelativeHumidity AS RAPNortheastRelativeHumidity," \
+                          "" \
+                          "gp_rap_Southeast.Temperature AS RAPSoutheastTemp,gp_rap_Southeast.PrecipitationRate AS RAPSoutheastPrecipRate," \
+                          "gp_rap_Southeast.Visibility AS RAPSoutheastVis,gp_rap_Southeast.WindSpeed AS RAPSoutheastWindSpeed," \
+                          "gp_rap_Southeast.WindDirection AS RAPSoutheastWidDir,gp_rap_Southeast.DewPointTemperature AS RAPSoutheastDewPoint," \
+                          "gp_rap_Southeast.AirPressure AS RAPSoutheastAirPressure,gp_rap_Southeast.RelativeHumidity AS RAPSoutheastRelativeHumidity," \
+                          "" \
+                          "gp_rap_Southwest.Temperature AS RAPSouthwestTemp,gp_rap_Southwest.PrecipitationRate AS RAPSouthwestPrecipRate," \
+                          "gp_rap_Southwest.Visibility AS RAPSouthwestVis,gp_rap_Southwest.WindSpeed AS RAPSouthwestWindSpeed," \
+                          "gp_rap_Southwest.WindDirection AS RAPSouthwestWidDir,gp_rap_Southwest.DewPointTemperature AS RAPSouthwestDewPoint," \
+                          "gp_rap_Southwest.AirPressure AS RAPSouthwestAirPressure," \
+                          "gp_rap_Southwest.RelativeHumidity AS RAPSouthwestRelativeHumidity "
+
         if nam_cell:
-            self.query += ",gp.Temperature AS NamTemp,gp.PrecipitationRate AS NamPrecipRate,gp.Visibility AS NamVisibility," \
-                     "gp.WindSpeed AS NamWindSpeed,gp.WindDirection AS NamWindDir," \
-                     "gp.DewPointTemperature AS NamDewPointTemp,gp.AirPressure AS NamAirPressure,gp.RelativeHumidity AS NamHumidity "
+            self.query += ", gp_nam.Temperature AS NAMTemperature, gp_nam.CloudCover AS NAMCloudCover," \
+                          "gp_nam.PrecipitationProbability AS NAMPrecipitationProbability," \
+                          "gp_nam.WindSpeed AS NAMWindSpeed,gp_nam.WindDirection AS NAMWindDirection," \
+                          "gp_nam.MaxTemperature AS NAMMaxTemp, gp_nam.MinTemperature AS NAMMinTemp," \
+                          "gp_nam.DewPointTemperature AS NAMDewPointTemp "
+
         if nam_grid:
-            self.query += (
-                ",gpWest.Temperature AS CellWestTemp,gpWest.PrecipitationRate AS CellWestPrecipRate,gpWest.Visibility AS CellWestVis,"
-                "gpWest.WindSpeed AS CellWestWindSpeed,gpWest.WindDirection AS CellWestWidDir,"
-                "gpWest.DewPointTemperature AS CellWestDewPoint,gpWest.AirPressure AS CellWestAirPressure,gpWest.RelativeHumidity AS CellWestRelativeHumidity,"
-                "gpEast.Temperature AS CellEastTemp,gpEast.PrecipitationRate AS CellEastPrecipRate,gpEast.Visibility AS CellEastVis,"
-                "gpEast.WindSpeed AS CellEastWindSpeed,gpEast.WindDirection AS CellEastWidDir,"
-                "gpEast.DewPointTemperature AS CellEastDewPoint,gpEast.AirPressure AS CellEastAirPressure,gpEast.RelativeHumidity AS CellEastRelativeHumidity,"
-                "gpNorth.Temperature AS CellNorthTemp,gpNorth.PrecipitationRate AS CellNorthPrecipRate,gpNorth.Visibility AS CellNorthVis,"
-                "gpNorth.WindSpeed AS CellNorthWindSpeed,gpNorth.WindDirection AS CellNorthWidDir,"
-                "gpNorth.DewPointTemperature AS CellNorthDewPoint,gpNorth.AirPressure AS CellNorthAirPressure,gpNorth.RelativeHumidity AS CellNorthRelativeHumidity,"
-                "gpSouth.Temperature AS CellSouthTemp,gpSouth.PrecipitationRate AS CellSouthPrecipRate,gpSouth.Visibility AS CellSouthVis,"
-                "gpSouth.WindSpeed AS CellSouthWindSpeed,gpSouth.WindDirection AS CellSouthWidDir,"
-                "gpSouth.DewPointTemperature AS CellSouthDewPoint,gpSouth.AirPressure AS CellSouthAirPressure,gpSouth.RelativeHumidity AS CellSouthRelativeHumidity,"
-                "gpNorthwest.Temperature AS CellNorthwestTemp,gpNorthwest.PrecipitationRate AS CellNorthwestPrecipRate,gpNorthwest.Visibility AS CellNorthwestVis,"
-                "gpNorthwest.WindSpeed AS CellNorthwestWindSpeed,gpNorthwest.WindDirection AS CellNorthwestWidDir,"
-                "gpNorthwest.DewPointTemperature AS CellNorthwestDewPoint,gpNorthwest.AirPressure AS CellNorthwestAirPressure,gpNorthwest.RelativeHumidity AS CellNorthwestRelativeHumidity,"
-                "gpNortheast.Temperature AS CellNortheastTemp,gpNortheast.PrecipitationRate AS CellNortheastPrecipRate,gpNortheast.Visibility AS CellNortheastVis,"
-                "gpNortheast.WindSpeed AS CellNortheastWindSpeed,gpNortheast.WindDirection AS CellNortheastWidDir,"
-                "gpNortheast.DewPointTemperature AS CellNortheastDewPoint,gpNortheast.AirPressure AS CellNortheastAirPressure,gpNortheast.RelativeHumidity AS CellNortheastRelativeHumidity,"
-                "gpSoutheast.Temperature AS CellSoutheastTemp,gpSoutheast.PrecipitationRate AS CellSoutheastPrecipRate,gpSoutheast.Visibility AS CellSoutheastVis,"
-                "gpSoutheast.WindSpeed AS CellSoutheastWindSpeed,gpSoutheast.WindDirection AS CellSoutheastWidDir,"
-                "gpSoutheast.DewPointTemperature AS CellSoutheastDewPoint,gpSoutheast.AirPressure AS CellSoutheastAirPressure,gpSoutheast.RelativeHumidity AS CellSoutheastRelativeHumidity,"
-                "gpSouthwest.Temperature AS CellSouthwestTemp,gpSouthwest.PrecipitationRate AS CellSouthwestPrecipRate,gpSouthwest.Visibility AS CellSouthwestVis,"
-                "gpSouthwest.WindSpeed AS CellSouthwestWindSpeed,gpSouthwest.WindDirection AS CellSouthwestWidDir,"
-                "gpSouthwest.DewPointTemperature AS CellSouthwestDewPoint,gpSouthwest.AirPressure AS CellSouthwestAirPressure,gpSouthwest.RelativeHumidity AS CellSouthwestRelativeHumidity ")
+            self.query += ", gp_nam_West.Temperature AS NAMWestTemperature,gp_nam_West.CloudCover AS NAMWestCloudCover," \
+                          "gp_nam_West.PrecipitationProbability AS NAMWestPrecipitationProbability," \
+                          "gp_nam_West.WindSpeed AS NAMWestWindSpeed,gp_nam_West.WindDirection AS NAMWestWindDirection," \
+                          "gp_nam_West.MaxTemperature AS NAMWestMaxTemp," \
+                          "gp_nam_West.MinTemperature AS NAMWestMinTemp," \
+                          "gp_nam_West.DewPointTemperature AS NAMWestDewPointTemp," \
+                          "" \
+                          "gp_nam_North.Temperature AS NAMNorthTemperature,gp_nam_North.CloudCover AS NAMNorthCloudCover," \
+                          "gp_nam_North.PrecipitationProbability AS NAMNorthPrecipitationProbability," \
+                          "gp_nam_North.WindSpeed AS NAMNorthWindSpeed,gp_nam_North.WindDirection AS NAMNorthWindDirection," \
+                          "gp_nam_North.MaxTemperature AS NAMNorthMaxTemp,gp_nam_North.MinTemperature AS NAMNorthMinTemp," \
+                          "gp_nam_North.DewPointTemperature AS NAMNorthDewPointTemp," \
+                          "" \
+                          "gp_nam_South.Temperature AS NAMSouthTemperature,gp_nam_South.CloudCover AS NAMSouthCloudCover," \
+                          "gp_nam_South.PrecipitationProbability AS NAMSouthPrecipitationProbability," \
+                          "gp_nam_South.WindSpeed AS NAMSouthWindSpeed,gp_nam_South.WindDirection AS NAMSouthWindDirection," \
+                          "gp_nam_South.MaxTemperature AS NAMSouthMaxTemp,gp_nam_South.MinTemperature AS NAMSouthMinTemp," \
+                          "gp_nam_South.DewPointTemperature AS NAMSouthDewPointTemp," \
+                          "" \
+                          "gp_nam_East.Temperature AS NAMEastTemperature,gp_nam_East.CloudCover AS NAMEastCloudCover," \
+                          "gp_nam_East.PrecipitationProbability AS NAMEastPrecipitationProbability," \
+                          "gp_nam_East.WindSpeed AS NAMEastWindSpeed,gp_nam_East.WindDirection AS NAMEastWindDirection," \
+                          "gp_nam_East.MaxTemperature AS NAMEastMaxTemp,gp_nam_East.MinTemperature AS NAMEastMinTemp," \
+                          "gp_nam_East.DewPointTemperature AS NAMEastDewPointTemp," \
+                          "" \
+                          "gp_nam_Northwest.Temperature AS NAMNorthwestTemperature," \
+                          "gp_nam_Northwest.CloudCover AS NAMNorthwestCloudCover," \
+                          "gp_nam_Northwest.PrecipitationProbability AS NAMNorthwestPrecipitationProbability," \
+                          "gp_nam_Northwest.WindSpeed AS NAMNorthwestWindSpeed," \
+                          "gp_nam_Northwest.WindDirection AS NAMNorthwestWindDirection," \
+                          "gp_nam_Northwest.MaxTemperature AS NAMNorthwestMaxTemp," \
+                          "gp_nam_Northwest.MinTemperature AS NAMNorthwestMinTemp," \
+                          "gp_nam_Northwest.DewPointTemperature AS NAMNorthwestDewPointTemp," \
+                          "" \
+                          "gp_nam_Northeast.Temperature AS NAMNortheastTemperature," \
+                          "gp_nam_Northeast.CloudCover AS NAMNortheastCloudCover," \
+                          "gp_nam_Northeast.PrecipitationProbability AS NAMNortheastPrecipitationProbability," \
+                          "gp_nam_Northeast.WindSpeed AS NAMNortheastWindSpeed," \
+                          "gp_nam_Northeast.WindDirection AS NAMNortheastWindDirection," \
+                          "gp_nam_Northeast.MaxTemperature AS NAMNortheastMaxTemp," \
+                          "gp_nam_Northeast.MinTemperature AS NAMNortheastMinTemp," \
+                          "gp_nam_Northeast.DewPointTemperature AS NAMNortheastDewPointTemp," \
+                          "" \
+                          "gp_nam_Southwest.Temperature AS NAMSouthWestTemperature," \
+                          "gp_nam_Southwest.CloudCover AS NAMSouthWestCloudCover," \
+                          "gp_nam_Southwest.PrecipitationProbability AS NAMSouthWestPrecipitationProbability," \
+                          "gp_nam_Southwest.WindSpeed AS NAMSouthWestWindSpeed," \
+                          "gp_nam_Southwest.WindDirection AS NAMSouthWestWindDirection," \
+                          "gp_nam_Southwest.MaxTemperature AS NAMSouthWestMaxTemp," \
+                          "gp_nam_Southwest.MinTemperature AS NAMSouthWestMinTemp," \
+                          "gp_nam_Southwest.DewPointTemperature AS NAMSouthWestDewPointTemp," \
+                          "" \
+                          "gp_nam_Southeast.Temperature AS NAMSouthEastTemperature," \
+                          "gp_nam_Southeast.CloudCover AS NAMSouthEastCloudCover," \
+                          "gp_nam_Southeast.PrecipitationProbability AS NAMSouthEastPrecipitationProbability," \
+                          "gp_nam_Southeast.WindSpeed AS NAMSouthEastWindSpeed," \
+                          "gp_nam_Southeast.WindDirection AS NAMSouthEastWindDirection," \
+                          "gp_nam_Southeast.MaxTemperature AS NAMSouthEastMaxTemp," \
+                          "gp_nam_Southeast.MinTemperature AS NAMSouthEastMinTemp," \
+                          "gp_nam_Southeast.DewPointTemperature AS NAMSouthEastDewPointTemp "
 
         # add target hour
         self.query += f', sr{h}.SR as SR{h} '
 
-        # add FROM and JOINs
+        # join up all necessary tables
         self.query += " from solarradiation sr "
         self.query += f' INNER JOIN solarradiation sr{h} ON sr{h}.id=sr.id+{h*4} and sr.SiteID=sr{h}.SiteID '
-        self.query += f' INNER JOIN gribprediction gp ON gp.SolarRadiationID=sr{h}.id AND (gp.Datasource="rap" OR gp.Datasource="rapinterpolation") ' \
-                 f' AND gp.HoursAhead=1 AND gp.cell="" and gp.SiteID=sr{h}.siteID '
 
         if window:
             self.query += f' INNER JOIN solarradiation psr1 ON psr1.id=sr.id-4' \
@@ -98,35 +184,86 @@ class Query(object):
                      f' INNER JOIN solarradiation psr23 ON psr23.id=sr.id-92' \
                      f' INNER JOIN solarradiation psr24 ON psr24.id=sr.id-96 '
 
-        if nam_grid:
-            self.query += " INNER JOIN gribprediction gpWest ON gpWest.SolarRadiationID=sr.id AND " \
-                     " (gpWest.Datasource='rap' OR gpWest.Datasource='rapinterpolation') AND gpWest.HoursAhead=1 " \
-                     " AND gpWest.cell='West' AND gp.SiteID=gpWest.SiteID" \
-                     " INNER JOIN gribprediction gpEast ON gpEast.SolarRadiationID=sr.id AND " \
-                     " (gpEast.Datasource='rap' OR gpEast.Datasource='rapinterpolation') AND gpEast.HoursAhead=1 " \
-                     " AND gpEast.cell='East' AND gp.SiteID=gpEast.SiteID" \
-                     " INNER JOIN gribprediction gpNorth ON gpNorth.SolarRadiationID=sr.id AND " \
-                     " (gpNorth.Datasource='rap' OR gpNorth.Datasource='rapinterpolation') AND gpNorth.HoursAhead=1 " \
-                     " AND gpNorth.cell='North' AND gp.SiteID=gpNorth.SiteID" \
-                     " INNER JOIN gribprediction gpSouth ON gpSouth.SolarRadiationID=sr.id AND " \
-                     " (gpSouth.Datasource='rap' OR gpSouth.Datasource='rapinterpolation') AND gpSouth.HoursAhead=1 " \
-                     " AND gpSouth.cell='South' AND gp.SiteID=gpSouth.SiteID" \
-                     " INNER JOIN gribprediction gpNorthwest ON gpNorthwest.SolarRadiationID=sr.id AND " \
-                     " (gpNorthwest.Datasource='rap' OR gpNorthwest.Datasource='rapinterpolation') AND gpNorthwest.HoursAhead=1 " \
-                     " AND gpNorthwest.cell='Northwest' AND gp.SiteID=gpNorthwest.SiteID" \
-                     " INNER JOIN gribprediction gpNortheast ON gpNortheast.SolarRadiationID=sr.id AND " \
-                     " (gpNortheast.Datasource='rap' OR gpNortheast.Datasource='rapinterpolation') AND gpNortheast.HoursAhead=1 " \
-                     " AND gpNortheast.cell='Northeast' AND gp.SiteID=gpNortheast.SiteID" \
-                     " INNER JOIN gribprediction gpSouthwest ON gpSouthwest.SolarRadiationID=sr.id AND " \
-                     " (gpSouthwest.Datasource='rap' OR gpSouthwest.Datasource='rapinterpolation') AND gpSouthwest.HoursAhead=1 " \
-                     " AND gpSouthwest.cell='Southwest' AND gp.SiteID=gpSouthwest.SiteID" \
-                     " INNER JOIN gribprediction gpSoutheast ON gpSoutheast.SolarRadiationID=sr.id AND " \
-                     " (gpSoutheast.Datasource='rap' OR gpSoutheast.Datasource='rapinterpolation') AND gpSoutheast.HoursAhead=1 " \
-                     " AND gpSoutheast.cell='Southeast' AND gp.SiteID=gpSoutheast.SiteID "
+        if rap_cell:
+            self.query += f' INNER JOIN gribprediction gp_rap ' \
+                          f'ON gp_rap.SolarRadiationID=sr.id ' \
+                          f'AND (gp_rap.Datasource="rap" OR gp_rap.Datasource="rapinterpolation") ' \
+                          f'AND gp_rap.HoursAhead=1 AND gp_rap.cell="" and gp_rap.SiteID=sr.siteID '
 
-        # add date and size constraints
-        self.query += f' WHERE sr.dateandtime BETWEEN "{start_date}" AND "{end_date}" AND sr.SiteID={self.site_id} ' \
-                 f' ORDER BY sr.dateandtime LIMIT 100000;'
+        if rap_grid:
+            self.query += " INNER JOIN gribprediction gp_rap_West ON gp_rap_West.SolarRadiationID=sr.id " \
+                          "AND (gp_rap_West.Datasource='rap' OR gp_rap_West.Datasource='rapinterpolation') " \
+                          "AND gp_rap_West.HoursAhead=1 AND gp_rap_West.cell='West' AND gp_rap.SiteID=gp_rap_West.SiteID " \
+                          "INNER JOIN gribprediction gp_rap_East ON gp_rap_East.SolarRadiationID=sr.id " \
+                          "AND (gp_rap_East.Datasource='rap' OR gp_rap_East.Datasource='rapinterpolation') " \
+                          "AND gp_rap_East.HoursAhead=1 AND gp_rap_East.cell='East' AND gp_rap.SiteID=gp_rap_East.SiteID " \
+                          "INNER JOIN gribprediction gp_rap_North ON gp_rap_North.SolarRadiationID=sr.id " \
+                          "AND (gp_rap_North.Datasource='rap' OR gp_rap_North.Datasource='rapinterpolation') " \
+                          "AND gp_rap_North.HoursAhead=1 AND gp_rap_North.cell='North' AND gp_rap.SiteID=gp_rap_North.SiteID " \
+                          "INNER JOIN gribprediction gp_rap_South ON gp_rap_South.SolarRadiationID=sr.id " \
+                          "AND (gp_rap_South.Datasource='rap' OR gp_rap_South.Datasource='rapinterpolation') " \
+                          "AND gp_rap_South.HoursAhead=1 AND gp_rap_South.cell='South' AND gp_rap.SiteID=gp_rap_South.SiteID " \
+                          "INNER JOIN gribprediction gp_rap_Northwest ON gp_rap_Northwest.SolarRadiationID=sr.id " \
+                          "AND (gp_rap_Northwest.Datasource='rap' OR gp_rap_Northwest.Datasource='rapinterpolation') " \
+                          "AND gp_rap_Northwest.HoursAhead=1 AND gp_rap_Northwest.cell='Northwest' " \
+                          "AND gp_rap.SiteID=gp_rap_Northwest.SiteID " \
+                          "INNER JOIN gribprediction gp_rap_Northeast ON gp_rap_Northeast.SolarRadiationID=sr.id " \
+                          "AND (gp_rap_Northeast.Datasource='rap' OR gp_rap_Northeast.Datasource='rapinterpolation') " \
+                          "AND gp_rap_Northeast.HoursAhead=1 AND gp_rap_Northeast.cell='Northeast' " \
+                          "AND gp_rap.SiteID=gp_rap_Northeast.SiteID " \
+                          "INNER JOIN gribprediction gp_rap_Southwest ON gp_rap_Southwest.SolarRadiationID=sr.id " \
+                          "AND (gp_rap_Southwest.Datasource='rap' OR gp_rap_Southwest.Datasource='rapinterpolation') " \
+                          "AND gp_rap_Southwest.HoursAhead=1 AND gp_rap_Southwest.cell='Southwest' " \
+                          "AND gp_rap.SiteID=gp_rap_Southwest.SiteID " \
+                          "INNER JOIN gribprediction gp_rap_Southeast ON gp_rap_Southeast.SolarRadiationID=sr.id " \
+                          "AND (gp_rap_Southeast.Datasource='rap' OR gp_rap_Southeast.Datasource='rapinterpolation') " \
+                          "AND gp_rap_Southeast.HoursAhead=1 AND gp_rap_Southeast.cell='Southeast' " \
+                          "AND gp_rap.SiteID=gp_rap_Southeast.SiteID "
+
+        if nam_cell:
+            self.query += " INNER JOIN gribprediction gp_nam ON gp_nam.SolarRadiationID=sr.id " \
+                          "AND (gp_nam.Datasource='NAM' OR gp_nam.Datasource='NAMInterpolation') " \
+                          "AND gp_nam.HoursAhead=24 AND gp_nam.cell='' and gp_nam.SiteID=sr.siteID "
+        if nam_grid:
+            self.query += " INNER JOIN gribprediction gp_nam_West ON gp_nam_West.SolarRadiationID=sr.id " \
+                          "AND (gp_nam_West.Datasource='NAM' OR gp_nam_West.Datasource='NAMInterpolation') " \
+                          "AND gp_nam_West.HoursAhead=24 AND gp_nam_West.cell='West' AND gp_nam_West.SiteID=sr.siteID " \
+                          "" \
+                          "INNER JOIN gribprediction gp_nam_East ON gp_nam_East.SolarRadiationID=sr.id " \
+                          "AND (gp_nam_East.Datasource='NAM' OR gp_nam_East.Datasource='NAMInterpolation') " \
+                          "AND gp_nam_East.HoursAhead=24 AND gp_nam_East.cell='East' AND gp_nam_East.SiteID=sr.siteID " \
+                          "" \
+                          "INNER JOIN gribprediction gp_nam_North ON gp_nam_North.SolarRadiationID=sr.id " \
+                          "AND (gp_nam_North.Datasource='NAM' OR gp_nam_North.Datasource='NAMInterpolation') " \
+                          "AND gp_nam_North.HoursAhead=24 AND gp_nam_North.cell='North' AND gp_nam_North.SiteID=sr.siteID " \
+                          "" \
+                          "INNER JOIN gribprediction gp_nam_South ON gp_nam_South.SolarRadiationID=sr.id " \
+                          "AND (gp_nam_South.Datasource='NAM' OR gp_nam_South.Datasource='NAMInterpolation') " \
+                          "AND gp_nam_South.HoursAhead=24 AND gp_nam_South.cell='South' AND gp_nam_South.SiteID=sr.siteID " \
+                          "" \
+                          "INNER JOIN gribprediction gp_nam_Northwest ON gp_nam_Northwest.SolarRadiationID=sr.id " \
+                          "AND (gp_nam_Northwest.Datasource='NAM' OR gp_nam_Northwest.Datasource='NAMInterpolation') " \
+                          "AND gp_nam_Northwest.HoursAhead=24 AND gp_nam_Northwest.cell='Northwest' AND gp_nam_Northwest.SiteID=sr.siteID " \
+                          "" \
+                          "INNER JOIN gribprediction gp_nam_Northeast ON gp_nam_Northeast.SolarRadiationID=sr.id " \
+                          "AND (gp_nam_Northeast.Datasource='NAM' OR gp_nam_Northeast.Datasource='NAMInterpolation') " \
+                          "AND gp_nam_Northeast.HoursAhead=24 AND gp_nam_Northeast.cell='Northeast' " \
+                          "AND gp_nam_Northeast.SiteID=sr.siteID " \
+                          "" \
+                          "INNER JOIN gribprediction gp_nam_Southwest ON gp_nam_Southwest.SolarRadiationID=sr.id " \
+                          "AND (gp_nam_Southwest.Datasource='NAM' OR gp_nam_Southwest.Datasource='NAMInterpolation') " \
+                          "AND gp_nam_Southwest.HoursAhead=24 AND gp_nam_Southwest.cell='Southwest' " \
+                          "AND gp_nam_Southwest.SiteID=sr.siteID " \
+                          "" \
+                          "INNER JOIN gribprediction gp_nam_Southeast ON gp_nam_Southeast.SolarRadiationID=sr.id " \
+                          "AND (gp_nam_Southeast.Datasource='NAM' OR gp_nam_Southeast.Datasource='NAMInterpolation') " \
+                          "AND gp_nam_Southeast.HoursAhead=24 AND gp_nam_Southeast.cell='Southeast' " \
+                          "AND gp_nam_Southeast.SiteID=sr.siteID "
+
+        # add date, site, and size constraints
+        self.query += f' WHERE sr.dateandtime BETWEEN "{start_date}" AND "{end_date}" ' \
+                      f' AND sr.SiteID={self.site_id} ' \
+                      f' ORDER BY sr.dateandtime LIMIT 500000;'
 
     def __str__(self):
         return self.query
