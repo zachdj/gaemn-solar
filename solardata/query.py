@@ -184,7 +184,12 @@ class Query(object):
                      f' INNER JOIN solarradiation psr23 ON psr23.id=sr.id-92' \
                      f' INNER JOIN solarradiation psr24 ON psr24.id=sr.id-96 '
 
-        if rap_cell:
+        ''' NOTE: The join on gribprediction is necessary for any target hour 
+        under 18 even if we aren't using rap_cell data because it filters out 
+        rows from solarradiation where we have no matching NAM data.
+        This ensures the same data is used for all experiments.
+        '''
+        if rap_cell or target_hour <= 18:
             self.query += f' INNER JOIN gribprediction gp_rap ' \
                           f'ON gp_rap.SolarRadiationID=sr.id ' \
                           f'AND (gp_rap.Datasource="rap" OR gp_rap.Datasource="rapinterpolation") ' \
@@ -220,7 +225,12 @@ class Query(object):
                           "AND gp_rap_Southeast.HoursAhead=1 AND gp_rap_Southeast.cell='Southeast' " \
                           "AND gp_rap.SiteID=gp_rap_Southeast.SiteID "
 
-        if nam_cell:
+        ''' NOTE: The join on gribprediction is necessary for any target hour 
+        over 18 even if we aren't using nam_cell data because it filters out 
+        rows from solarradiation where we have no matching NAM data.
+        This ensures the same data is used for all experiments.
+        '''
+        if nam_cell or target_hour > 18:
             self.query += " INNER JOIN gribprediction gp_nam ON gp_nam.SolarRadiationID=sr.id " \
                           "AND (gp_nam.Datasource='NAM' OR gp_nam.Datasource='NAMInterpolation') " \
                           "AND gp_nam.HoursAhead=24 AND gp_nam.cell='' and gp_nam.SiteID=sr.siteID "
