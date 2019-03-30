@@ -1,4 +1,7 @@
-""" Trains several different types of ML models against dataset of GAEMN weather wariables for 1-hour prediction """
+""" Trains several different types of ML models against dataset of
+GAEMN weather wariables for 1-hour prediction
+
+"""
 
 import logging
 import sys
@@ -19,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    logger.info(f'Computing MAE for set of 1-hour models')
+    logger.info(f'Computing MAE for set of 24-hour models')
 
     table_columns = ['Machine Learning Method', 'MAE (watts/m2)', 'Time (s)']
     table = Texttable()
@@ -27,10 +30,12 @@ def main():
     table.header(table_columns)
 
     logger.debug('Generating query...')
-    query = Query(target_hour=1, site='griffin', gaemn=True, window=False, nam_cell=False, nam_grid=False)
+    query = Query(target_hour=24, site='griffin', gaemn=True, window=False,
+                  nam_cell=False, nam_grid=False,
+                  start_date='2003-01-01', end_date='2006-01-01')
     logger.debug('Query: \n{query}')
     logger.debug('Constructing dataset from query')
-    ds = Dataset(name='1hr-gaemn-data', query=query)
+    ds = Dataset(name='24hr-gaemn-data', query=query)
     X_train, X_test, y_train, y_test = train_test_split(ds.examples, ds.labels, test_size=0.20, random_state=123)
 
     models = {
