@@ -50,6 +50,9 @@ if __name__ == '__main__':
                       "gaemn + window + single-cell",
                       "gaemn + window + multicell", "NAM Only",
                       "% decrease", "% decrease (NAM Only)"])
+        csv_contents = ','.join(["Hour", "gaemn only", "gaemn+window",
+                      "gaemn + window + single-cell",
+                      "gaemn + window + multicell", "NAM Only"]) + '\n'
 
         # do an experiment for each hour and each dataset
         for hour in list(range(1, 37)):
@@ -100,16 +103,27 @@ if __name__ == '__main__':
                 end_date=dataset_components['end_date'],)
             pct_improvement = (window_mae - multicell_mae) * 100 / window_mae
             pct_improvement_nam = (window_mae - nam_only) * 100 / window_mae
+
             table.add_row(
                 [hour, all_attr_mae, window_mae, singlecell_mae,
                  multicell_mae, nam_only, pct_improvement, pct_improvement_nam])
 
+            csv_contents += ','.join(map(lambda i: str(i),
+                [hour, all_attr_mae, window_mae,
+                 singlecell_mae, multicell_mae, nam_only])) + '\n'
+
         # output the table to a file:
         if not os.path.exists(OUTPATH):
             os.makedirs(OUTPATH)
-        outfilepath = os.path.join(OUTPATH, site_name+".txt")
-        with open(outfilepath, 'w') as outfile:
+        table_path = os.path.join(OUTPATH, site_name+".txt")
+        with open(table_path, 'w') as outfile:
             print(site_name.capitalize(), file=outfile)
             print(table.draw(), file=outfile)
+
+        # save the csv file
+        csv_path = os.path.join(OUTPATH, site_name+".txt")
+        with open(csv_path, 'w') as outfile:
+            print(site_name.capitalize(), file=outfile)
+            print(csv_contents, file=outfile)
 
     print("Done!")
