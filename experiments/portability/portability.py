@@ -76,6 +76,53 @@ def one_vs_rest():
             print(site, hour, mae)
 
 
+def rest_vs_one():
+    logger.info('Running experiment REST vs ONE')
+    for site in sites.get_names():
+        logger.info(f'Testing on site {site}')
+        for hour in (1, 24):
+            dataset_components = {
+                'target_hour': hour,
+                'gaemn': True,
+                'window': True,
+                'rap_cell': hour <= 18,
+                'rap_grid': hour <= 18,
+                'nam_cell': hour > 18,
+                'nam_grid': hour > 18,
+                'start_date': '2011-06-22' if hour <= 18 else '2003-01-01',
+                'end_date': '2012-04-30 23:45:00' if hour <= 18 else '2006-01-01'
+            }
+            other_site_queries = [
+                Query(site=other_site, **dataset_components)
+                for other_site in sites.get_names()
+                if other_site != site
+            ]
+            other_site_ds = [
+                Dataset(query=os_query) for os_query in other_site_queries
+            ]
+            train_x = np.concatenate(
+                [ds.examples for ds in other_site_ds],
+                axis=0
+            )
+            train_y = np.concatenate(
+                [ds.labels for ds in other_site_ds],
+                axis=0
+            )
+
+            rf = RandomForestRegressor(**_RF_PARAMS)
+            rf.fit(train_x, train_y)
+
+            site_query = Query(site=site, **dataset_components)
+            site_ds = Dataset(query=site_query)
+
+            y_true = site_ds.labels
+            y_pred = rf.predict(site_ds.examples)
+
+            mae = mean_absolute_error(y_true, y_pred)
+            print(site, hour, mae)
+
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(message)s')
     one_vs_rest()
+    rest_vs_one()
