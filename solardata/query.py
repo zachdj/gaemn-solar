@@ -23,7 +23,7 @@ class Query(object):
         h = target_hour
 
         # build the query with the selected components
-        self.query = "SELECT sr.Day, sr.AdjDate "
+        self.query = f"SELECT sr{h}.Day, sr{h}.AdjDate "
         if gaemn:
             self.query += ",sr.AirTemp,sr.Humidity,sr.Dewpoint,sr.VaporP,sr.VaporPD,sr.BarometricP," \
                      "sr.WindSpeed,sr.WindDir, sr.SD,sr.MaxWind,sr.Pan,sr.SR,sr.TSR,sr.PAR,sr.Rain,sr.Rain2 "
@@ -191,36 +191,36 @@ class Query(object):
         '''
         if rap_cell or target_hour <= 18:
             self.query += f' INNER JOIN gribprediction gp_rap ' \
-                          f'ON gp_rap.SolarRadiationID=sr.id ' \
+                          f'ON gp_rap.SolarRadiationID=sr{h}.id-4 ' \
                           f'AND (gp_rap.Datasource="rap" OR gp_rap.Datasource="rapinterpolation") ' \
                           f'AND gp_rap.HoursAhead=1 AND gp_rap.cell="" and gp_rap.SiteID=sr.siteID '
 
         if rap_grid:
-            self.query += " INNER JOIN gribprediction gp_rap_West ON gp_rap_West.SolarRadiationID=sr.id " \
+            self.query += f" INNER JOIN gribprediction gp_rap_West ON gp_rap_West.SolarRadiationID=sr{h}.id-4 " \
                           "AND (gp_rap_West.Datasource='rap' OR gp_rap_West.Datasource='rapinterpolation') " \
                           "AND gp_rap_West.HoursAhead=1 AND gp_rap_West.cell='West' AND gp_rap.SiteID=gp_rap_West.SiteID " \
-                          "INNER JOIN gribprediction gp_rap_East ON gp_rap_East.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_rap_East ON gp_rap_East.SolarRadiationID=sr{h}.id-4 " \
                           "AND (gp_rap_East.Datasource='rap' OR gp_rap_East.Datasource='rapinterpolation') " \
                           "AND gp_rap_East.HoursAhead=1 AND gp_rap_East.cell='East' AND gp_rap.SiteID=gp_rap_East.SiteID " \
-                          "INNER JOIN gribprediction gp_rap_North ON gp_rap_North.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_rap_North ON gp_rap_North.SolarRadiationID=sr{h}.id-4 " \
                           "AND (gp_rap_North.Datasource='rap' OR gp_rap_North.Datasource='rapinterpolation') " \
                           "AND gp_rap_North.HoursAhead=1 AND gp_rap_North.cell='North' AND gp_rap.SiteID=gp_rap_North.SiteID " \
-                          "INNER JOIN gribprediction gp_rap_South ON gp_rap_South.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_rap_South ON gp_rap_South.SolarRadiationID=sr{h}.id-4 " \
                           "AND (gp_rap_South.Datasource='rap' OR gp_rap_South.Datasource='rapinterpolation') " \
                           "AND gp_rap_South.HoursAhead=1 AND gp_rap_South.cell='South' AND gp_rap.SiteID=gp_rap_South.SiteID " \
-                          "INNER JOIN gribprediction gp_rap_Northwest ON gp_rap_Northwest.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_rap_Northwest ON gp_rap_Northwest.SolarRadiationID=sr{h}.id-4 " \
                           "AND (gp_rap_Northwest.Datasource='rap' OR gp_rap_Northwest.Datasource='rapinterpolation') " \
                           "AND gp_rap_Northwest.HoursAhead=1 AND gp_rap_Northwest.cell='Northwest' " \
                           "AND gp_rap.SiteID=gp_rap_Northwest.SiteID " \
-                          "INNER JOIN gribprediction gp_rap_Northeast ON gp_rap_Northeast.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_rap_Northeast ON gp_rap_Northeast.SolarRadiationID=sr{h}.id-4 " \
                           "AND (gp_rap_Northeast.Datasource='rap' OR gp_rap_Northeast.Datasource='rapinterpolation') " \
                           "AND gp_rap_Northeast.HoursAhead=1 AND gp_rap_Northeast.cell='Northeast' " \
                           "AND gp_rap.SiteID=gp_rap_Northeast.SiteID " \
-                          "INNER JOIN gribprediction gp_rap_Southwest ON gp_rap_Southwest.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_rap_Southwest ON gp_rap_Southwest.SolarRadiationID=sr{h}.id-4 " \
                           "AND (gp_rap_Southwest.Datasource='rap' OR gp_rap_Southwest.Datasource='rapinterpolation') " \
                           "AND gp_rap_Southwest.HoursAhead=1 AND gp_rap_Southwest.cell='Southwest' " \
                           "AND gp_rap.SiteID=gp_rap_Southwest.SiteID " \
-                          "INNER JOIN gribprediction gp_rap_Southeast ON gp_rap_Southeast.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_rap_Southeast ON gp_rap_Southeast.SolarRadiationID=sr{h}.id-4 " \
                           "AND (gp_rap_Southeast.Datasource='rap' OR gp_rap_Southeast.Datasource='rapinterpolation') " \
                           "AND gp_rap_Southeast.HoursAhead=1 AND gp_rap_Southeast.cell='Southeast' " \
                           "AND gp_rap.SiteID=gp_rap_Southeast.SiteID "
@@ -231,47 +231,48 @@ class Query(object):
         This ensures the same data is used for all experiments.
         '''
         if nam_cell or target_hour > 18:
-            self.query += " INNER JOIN gribprediction gp_nam ON gp_nam.SolarRadiationID=sr.id " \
-                          "AND (gp_nam.Datasource='NAM' OR gp_nam.Datasource='NAMInterpolation') " \
-                          "AND gp_nam.HoursAhead=24 AND gp_nam.cell='' and gp_nam.SiteID=sr.siteID "
+            self.query += f" INNER JOIN gribprediction gp_nam ON gp_nam.SolarRadiationID=sr.id " \
+                          f"AND (gp_nam.Datasource='NAM' OR gp_nam.Datasource='NAMInterpolation') " \
+                          f"AND gp_nam.HoursAhead=24 AND gp_nam.cell='' and gp_nam.SiteID=sr.siteID "
         if nam_grid:
-            self.query += " INNER JOIN gribprediction gp_nam_West ON gp_nam_West.SolarRadiationID=sr.id " \
+            self.query += f" INNER JOIN gribprediction gp_nam_West ON gp_nam_West.SolarRadiationID=sr.id " \
                           "AND (gp_nam_West.Datasource='NAM' OR gp_nam_West.Datasource='NAMInterpolation') " \
                           "AND gp_nam_West.HoursAhead=24 AND gp_nam_West.cell='West' AND gp_nam_West.SiteID=sr.siteID " \
                           "" \
-                          "INNER JOIN gribprediction gp_nam_East ON gp_nam_East.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_nam_East ON gp_nam_East.SolarRadiationID=sr.id " \
                           "AND (gp_nam_East.Datasource='NAM' OR gp_nam_East.Datasource='NAMInterpolation') " \
                           "AND gp_nam_East.HoursAhead=24 AND gp_nam_East.cell='East' AND gp_nam_East.SiteID=sr.siteID " \
                           "" \
-                          "INNER JOIN gribprediction gp_nam_North ON gp_nam_North.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_nam_North ON gp_nam_North.SolarRadiationID=sr.id " \
                           "AND (gp_nam_North.Datasource='NAM' OR gp_nam_North.Datasource='NAMInterpolation') " \
                           "AND gp_nam_North.HoursAhead=24 AND gp_nam_North.cell='North' AND gp_nam_North.SiteID=sr.siteID " \
                           "" \
-                          "INNER JOIN gribprediction gp_nam_South ON gp_nam_South.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_nam_South ON gp_nam_South.SolarRadiationID=sr.id " \
                           "AND (gp_nam_South.Datasource='NAM' OR gp_nam_South.Datasource='NAMInterpolation') " \
                           "AND gp_nam_South.HoursAhead=24 AND gp_nam_South.cell='South' AND gp_nam_South.SiteID=sr.siteID " \
                           "" \
-                          "INNER JOIN gribprediction gp_nam_Northwest ON gp_nam_Northwest.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_nam_Northwest ON gp_nam_Northwest.SolarRadiationID=sr.id " \
                           "AND (gp_nam_Northwest.Datasource='NAM' OR gp_nam_Northwest.Datasource='NAMInterpolation') " \
                           "AND gp_nam_Northwest.HoursAhead=24 AND gp_nam_Northwest.cell='Northwest' AND gp_nam_Northwest.SiteID=sr.siteID " \
                           "" \
-                          "INNER JOIN gribprediction gp_nam_Northeast ON gp_nam_Northeast.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_nam_Northeast ON gp_nam_Northeast.SolarRadiationID=sr.id " \
                           "AND (gp_nam_Northeast.Datasource='NAM' OR gp_nam_Northeast.Datasource='NAMInterpolation') " \
                           "AND gp_nam_Northeast.HoursAhead=24 AND gp_nam_Northeast.cell='Northeast' " \
                           "AND gp_nam_Northeast.SiteID=sr.siteID " \
                           "" \
-                          "INNER JOIN gribprediction gp_nam_Southwest ON gp_nam_Southwest.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_nam_Southwest ON gp_nam_Southwest.SolarRadiationID=sr.id " \
                           "AND (gp_nam_Southwest.Datasource='NAM' OR gp_nam_Southwest.Datasource='NAMInterpolation') " \
                           "AND gp_nam_Southwest.HoursAhead=24 AND gp_nam_Southwest.cell='Southwest' " \
                           "AND gp_nam_Southwest.SiteID=sr.siteID " \
                           "" \
-                          "INNER JOIN gribprediction gp_nam_Southeast ON gp_nam_Southeast.SolarRadiationID=sr.id " \
+                          f"INNER JOIN gribprediction gp_nam_Southeast ON gp_nam_Southeast.SolarRadiationID=sr.id " \
                           "AND (gp_nam_Southeast.Datasource='NAM' OR gp_nam_Southeast.Datasource='NAMInterpolation') " \
                           "AND gp_nam_Southeast.HoursAhead=24 AND gp_nam_Southeast.cell='Southeast' " \
                           "AND gp_nam_Southeast.SiteID=sr.siteID "
 
         # add date, site, and size constraints
         self.query += f' WHERE sr.dateandtime BETWEEN "{start_date}" AND "{end_date}" ' \
+                      f' AND sr{h}.id > {4 if h <=18 else h*4} ' \
                       f' AND sr.SiteID={self.site_id} ' \
                       f' ORDER BY sr.dateandtime LIMIT 500000;'
 

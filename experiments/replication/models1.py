@@ -41,8 +41,9 @@ def main():
             solver='adam',
             batch_size=100,
             learning_rate='constant',
-            learning_rate_init=0.3,
+            learning_rate_init=0.003,
             momentum=0.2,
+            max_iter=500,
             random_state=123,
         ),
         'M5 Model Tree': DecisionTreeRegressor(
