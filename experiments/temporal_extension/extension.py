@@ -12,7 +12,7 @@ from solardata.query import Query
 import solardata.sites as sites
 
 # output directory
-OUTPATH = './results/replication/rf'
+OUTPATH = '/home/zach/Develop/gaemn-solar/results/replication/rf'
 
 # params for rf regressor
 rf_params = {
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                       "gaemn + window + multicell", "NAM Only"]) + '\n'
 
         # do an experiment for each hour and each dataset
-        for hour in list(range(1, 37)):
+        for hour in list(range(1, 25)):
             dataset_components = {
                 'gaemn': True,
                 'window': True,
@@ -121,9 +121,8 @@ if __name__ == '__main__':
             print(table.draw(), file=outfile)
 
         # save the csv file
-        csv_path = os.path.join(OUTPATH, site_name+".txt")
+        csv_path = os.path.join(OUTPATH, site_name+".csv")
         with open(csv_path, 'w') as outfile:
-            print(site_name.capitalize(), file=outfile)
             print(csv_contents, file=outfile)
 
     print("Done!")
