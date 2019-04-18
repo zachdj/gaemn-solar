@@ -1,0 +1,87 @@
+Running experiment ONE vs REST
+Training on site griffin
+for hour 1
+griffin 1 77.17414254881416
+for hour 24
+griffin 24 63.72505271110159
+Training on site jonesboro
+for hour 1
+jonesboro 1 50.97108496553385
+for hour 24
+jonesboro 24 60.13060380444372
+Training on site attapulgus
+for hour 1
+attapulgus 1 50.468509973460044
+for hour 24
+attapulgus 24 62.315053765381364
+Training on site blairsville
+for hour 1
+blairsville 1 51.0549549497693
+for hour 24
+blairsville 24 61.640749649742716
+Training on site brunswick
+for hour 1
+brunswick 1 47.00451009496788
+for hour 24
+brunswick 24 61.287125322223915
+Running experiment REST vs ONE
+Testing on site griffin
+griffin 1 36.07243366754566
+griffin 24 46.43404551628563
+Testing on site jonesboro
+jonesboro 1 37.31455670469059
+jonesboro 24 46.03383020636184
+Testing on site attapulgus
+attapulgus 1 35.58216124744665
+attapulgus 24 53.69890585775014
+Testing on site blairsville
+blairsville 1 41.949387418312064
+blairsville 24 55.17260695649138
+Testing on site brunswick
+brunswick 1 62.28515122632689
+brunswick 24 57.17491012704977
+
+************************
+Re-running experiments with NAM-only dataset
+Running experiment ONE vs REST
+Training on site griffin
+for hour 1
+griffin 1 53.701139144007264
+for hour 24
+griffin 24 54.99338010724202
+Training on site jonesboro
+for hour 1
+jonesboro 1 59.78737590328409
+for hour 24
+jonesboro 24 54.376375102787414
+Training on site attapulgus
+for hour 1
+attapulgus 1 57.852954179711574
+for hour 24
+attapulgus 24 53.13898239730925
+Training on site blairsville
+for hour 1
+blairsville 1 64.42217622528489
+for hour 24
+blairsville 24 59.47760354054147
+Training on site brunswick
+for hour 1
+brunswick 1 66.14945842431992
+for hour 24
+brunswick 24 57.13712923990717
+Running experiment REST vs ONE
+Testing on site griffin
+griffin 1 49.73815980388705
+griffin 24 44.250921459817135
+Testing on site jonesboro
+jonesboro 1 46.54429155412701
+jonesboro 24 44.56746308632796
+Testing on site attapulgus
+attapulgus 1 50.51299474983272
+attapulgus 24 55.24526952050036
+Testing on site blairsville
+blairsville 1 59.009765835854445
+blairsville 24 54.33243473419831
+Testing on site brunswick
+brunswick 1 68.95631850490611
+brunswick 24 55.12112204897041

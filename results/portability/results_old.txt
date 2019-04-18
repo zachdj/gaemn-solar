@@ -1,0 +1,50 @@
+Running experiment ONE vs REST
+
+Training on site griffin
+for hour 1
+griffin 1 77.17414254881416
+for hour 24
+griffin 24 63.72148475832619
+
+Training on site jonesboro
+for hour 1
+jonesboro 1 50.97108496553385
+for hour 24
+jonesboro 24 60.13053713324057
+
+Training on site attapulgus
+for hour 1
+attapulgus 1 50.468509973460044
+for hour 24
+attapulgus 24 62.3233755129442
+
+Training on site blairsville
+for hour 1
+blairsville 1 51.0549549497693
+for hour 24
+blairsville 24 61.64074499865239
+
+Training on site brunswick
+for hour 1
+brunswick 1 47.00451009496788
+for hour 24
+brunswick 24 61.26634619382837
+
+
+
+Running experiment REST vs ONE
+Testing on site griffin
+griffin 1 36.291730860492834
+griffin 24 46.23492214468145
+Testing on site jonesboro
+jonesboro 1 37.292448442082765
+jonesboro 24 46.72845693745133
+Testing on site attapulgus
+attapulgus 1 35.00057797964081
+attapulgus 24 53.37859356907276
+Testing on site blairsville
+blairsville 1 46.65653596183233
+blairsville 24 54.94330570742748
+Testing on site brunswick
+brunswick 1 62.534981652118795
+brunswick 24 55.610550906625825
