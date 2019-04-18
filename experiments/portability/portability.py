@@ -31,7 +31,7 @@ _RF_PARAMS = {
 }
 
 
-def one_vs_rest():
+def one_vs_rest(include_gaemn=True):
     logger.info('Running experiment ONE vs REST')
     for site in sites.get_names():
         logger.info(f'Training on site {site}')
@@ -39,8 +39,8 @@ def one_vs_rest():
             logger.info(f'for hour {hour}')
             dataset_components = {
                 'target_hour': hour,
-                'gaemn': True,
-                'window': True,
+                'gaemn': include_gaemn,
+                'window': include_gaemn,
                 'rap_cell': hour <= 18,
                 'rap_grid': hour <= 18,
                 'nam_cell': hour > 18,
@@ -76,15 +76,15 @@ def one_vs_rest():
             print(site, hour, mae)
 
 
-def rest_vs_one():
+def rest_vs_one(include_gaemn=True):
     logger.info('Running experiment REST vs ONE')
     for site in sites.get_names():
         logger.info(f'Testing on site {site}')
         for hour in (1, 24):
             dataset_components = {
                 'target_hour': hour,
-                'gaemn': True,
-                'window': True,
+                'gaemn': include_gaemn,
+                'window': include_gaemn,
                 'rap_cell': hour <= 18,
                 'rap_grid': hour <= 18,
                 'nam_cell': hour > 18,
@@ -100,12 +100,22 @@ def rest_vs_one():
             other_site_ds = [
                 Dataset(query=os_query) for os_query in other_site_queries
             ]
+            train_x = []
+            train_y = []
+            for ds in other_site_ds:
+                # resample so that the size of the training sets are the same
+                # as in one_vs_rest
+                sample_indices = np.random.random_integers(
+                    0, len(ds.examples)-1, len(ds.examples) // 4)
+                train_x.append(ds.examples[sample_indices])
+                train_y.append(ds.labels[sample_indices])
+
             train_x = np.concatenate(
-                [ds.examples for ds in other_site_ds],
+                [x for x in train_x],
                 axis=0
             )
             train_y = np.concatenate(
-                [ds.labels for ds in other_site_ds],
+                [y for y in train_y],
                 axis=0
             )
 
@@ -126,3 +136,8 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(message)s')
     one_vs_rest()
     rest_vs_one()
+
+    print('\n************************\n'
+          'Re-running experiments with NAM-only dataset')
+    one_vs_rest(include_gaemn=False)
+    rest_vs_one(include_gaemn=False)
